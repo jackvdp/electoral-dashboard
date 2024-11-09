@@ -6,7 +6,7 @@ import { TasksView } from "@/components/tasks-view"
 import { DataTable } from "@/components/sponsors-table/data-table";
 import { useState } from "react"
 import { useSponsors } from "@/data/sponsors"
-import { columns } from "@/components/sponsors-table/columns"
+// import { columns } from "@/components/sponsors-table/columns"
 
 type View = 'sponsors' | 'tasks';
 
@@ -19,7 +19,7 @@ export default function DashboardPage() {
       <div className="flex min-h-screen w-full bg-white">
         <DashboardSidebar currentView={currentView} onViewChange={setCurrentView} />
         <main className="flex-1 p-6">
-          {currentView === 'sponsors' && <DataTable columns={columns} data={sponsors} />}
+          {/* {currentView === 'sponsors' && <DataTable columns={columns} data={sponsors} />} */}
           {currentView === 'tasks' && <TasksView />}
         </main>
       </div>
