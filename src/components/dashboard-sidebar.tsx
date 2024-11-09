@@ -9,9 +9,9 @@ import {
     SidebarGroupContent,
     SidebarFooter
   } from "@/components/ui/sidebar"
-  import { ClipboardList, Users, Settings } from "lucide-react"
+  import { ClipboardList, Users } from "lucide-react"
   
-  type View = 'sponsors' | 'tasks' | 'settings';
+  type View = 'sponsors' | 'tasks'
   
   interface DashboardSidebarProps {
     currentView: View;
@@ -44,15 +44,6 @@ import {
                   >
                     <ClipboardList className="mr-2 h-4 w-4" />
                     <span>Tasks</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    onClick={() => onViewChange('settings')}
-                    className={currentView === 'settings' ? 'bg-accent' : ''}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

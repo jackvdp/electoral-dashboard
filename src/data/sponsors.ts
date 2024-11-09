@@ -1,36 +1,45 @@
-// data/sponsors.ts
-export const sponsors = [
-    {
-        id: 1,
-        name: "Smartmatic",
-        initialContact: true,
-        initialPhoneCall: true,
-        preEventActivities: false,
-        dedicatedSpeakingSlot: "Wafula",
-        exhibitionSpace: "Yes – need a TV",
-        receivedProgrammeAdvert: true,
-        customsSupport: false,
-        bookedHotel: true,
-        numberOfAttendees: 4,
-        attendeeNames: "Jesús Gil, Alexander Rakov, Khodr Akil, Guillermo Solis",
-        contactEmail: "ernesto.parisca@smartmatic.com; ssaba@smartmatic.com"
-    },
-    {
-        id: 2,
-        name: "Al Ghurair",
-        initialContact: true,
-        initialPhoneCall: true,
-        preEventActivities: false,
-        dedicatedSpeakingSlot: null,
-        exhibitionSpace: "Yes",
-        receivedProgrammeAdvert: true,
-        customsSupport: false,
-        bookedHotel: false,
-        numberOfAttendees: 2,
-        attendeeNames: "Rajeev Kumar tyagi, Abdul Kayum",
-        contactEmail: "Rajeev.Tyagi@al-ghurair.com"
-    },
-    // ... add remaining sponsors
-]
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { Sponsor } from '../types'
 
-export type Sponsor = typeof sponsors[number];
+interface SponsorsStore {
+    sponsors: Sponsor[]
+    addSponsor: (sponsor: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>) => void
+    updateSponsor: (id: string, updates: Partial<Sponsor>) => void
+    deleteSponsor: (id: string) => void
+}
+
+export const useSponsors = create<SponsorsStore>()(
+    persist(
+        (set) => ({
+            sponsors: [],
+            addSponsor: (newSponsor) =>
+                set((state) => ({
+                    sponsors: [
+                        ...state.sponsors,
+                        {
+                            ...newSponsor,
+                            id: crypto.randomUUID(),
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                        },
+                    ],
+                })),
+            updateSponsor: (id, updates) =>
+                set((state) => ({
+                    sponsors: state.sponsors.map((sponsor) =>
+                        sponsor.id === id
+                            ? { ...sponsor, ...updates, updatedAt: new Date() }
+                            : sponsor
+                    ),
+                })),
+            deleteSponsor: (id) =>
+                set((state) => ({
+                    sponsors: state.sponsors.filter((sponsor) => sponsor.id !== id),
+                })),
+        }),
+        {
+            name: 'sponsors-storage',
+        }
+    )
+)
