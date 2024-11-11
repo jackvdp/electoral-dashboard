@@ -2,7 +2,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { TasksView } from "@/components/tasks-view"
-import { SponsorsTable } from "@/components/sponsors-table/sponsors-table"
+import { SponsorsTable } from "@/components/sponsors-table"
 import { useState } from "react"
 import { SponsorsProvider } from "@/hooks/use-sponsors"
 
