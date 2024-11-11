@@ -3,7 +3,7 @@ import { Sponsor } from "@prisma/client"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, MoreHorizontal, Mail } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { EditableCell } from "./editable-cell"
+import { EditableCell } from "../reusables/editable-cell"
 import {
     DropdownMenu,
     DropdownMenuContent,
