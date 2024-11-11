@@ -4,16 +4,13 @@ export interface Sponsor {
     id: string
     name: string
     initialContact: boolean
-    initialPhoneCall: boolean
-    dedicatedSpeakingSlot: string | null
-    exhibitionSpace: string
+    exhibitionSpace: boolean
+    specialRequirments: string
     receivedProgrammeAdvert: boolean
-    customsSupport: boolean
     bookedHotel: boolean
     numberOfAttendees: number
-    attendeeNames: string
-    contactEmail: string
-    status: SponsorStatus
+    attendeeNames: string | null
+    contactEmail: string | null
     createdAt: Date
     updatedAt: Date
 }

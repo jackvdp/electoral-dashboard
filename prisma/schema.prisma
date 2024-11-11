@@ -14,19 +14,16 @@ generator client {
 }
 
 model Sponsor {
-  id                      String    @id @default(uuid())
+  id                      String   @id @default(uuid())
   name                    String
-  initialContact         Boolean   @default(false)
-  initialPhoneCall       Boolean   @default(false)
-  dedicatedSpeakingSlot  String?
-  exhibitionSpace        String?
-  receivedProgrammeAdvert Boolean   @default(false)
-  customsSupport         Boolean   @default(false)
-  bookedHotel            Boolean   @default(false)
-  numberOfAttendees      Int       @default(0)
-  attendeeNames          String?
-  contactEmail           String?
-  status                 String    @default("pending")
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  initialContact          Boolean  @default(false)
+  exhibitionSpace         Boolean  @default(false)
+  specialRequirments      String   @default("")
+  receivedProgrammeAdvert Boolean  @default(false)
+  bookedHotel             Boolean  @default(false)
+  numberOfAttendees       Int      @default(0)
+  attendeeNames           String?
+  contactEmail            String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }

@@ -83,16 +83,13 @@ export function SponsorsTable() {
       await addSponsor({
         name: "New Sponsor",
         initialContact: false,
-        initialPhoneCall: false,
-        dedicatedSpeakingSlot: null,
         exhibitionSpace: "",
         receivedProgrammeAdvert: false,
-        customsSupport: false,
         bookedHotel: false,
         numberOfAttendees: 0,
         attendeeNames: "",
         contactEmail: "",
-        status: "pending",
+        specialRequirments: "",
       })
     } catch (error) {
       console.error('Failed to add sponsor:', error)
