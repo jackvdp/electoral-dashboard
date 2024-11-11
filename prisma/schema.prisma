@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Sponsor {
+  id                      String    @id @default(uuid())
+  name                    String
+  initialContact         Boolean   @default(false)
+  initialPhoneCall       Boolean   @default(false)
+  dedicatedSpeakingSlot  String?
+  exhibitionSpace        String?
+  receivedProgrammeAdvert Boolean   @default(false)
+  customsSupport         Boolean   @default(false)
+  bookedHotel            Boolean   @default(false)
+  numberOfAttendees      Int       @default(0)
+  attendeeNames          String?
+  contactEmail           String?
+  status                 String    @default("pending")
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}

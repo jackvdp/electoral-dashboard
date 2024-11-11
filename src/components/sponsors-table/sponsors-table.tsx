@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-
 import {
   Table,
   TableBody,
@@ -31,26 +30,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Plus } from "lucide-react"
-import { useSponsors } from "@/data/sponsors"
+import { useSponsors } from "@/hooks/use-sponsors"
+import { useEffect } from "react"
+import { createColumns } from "./columns"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-}
-
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function SponsorsTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { addSponsor } = useSponsors()
+
+  const {
+    sponsors,
+    isLoading,
+    error,
+    addSponsor,
+    updateSponsor,
+    deleteSponsor,
+    fetchSponsors
+  } = useSponsors()
+
+  const columns = React.useMemo(
+    () => createColumns({ updateSponsor, deleteSponsor }),
+    [updateSponsor, deleteSponsor]
+  )
+
+  useEffect(() => {
+    fetchSponsors()
+  }, [fetchSponsors])
 
   const table = useReactTable({
-    data,
+    data: sponsors,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -68,22 +78,29 @@ export function DataTable<TData, TValue>({
     },
   })
 
-  const handleAddSponsor = () => {
-    addSponsor({
-      name: "New Sponsor",
-      initialContact: false,
-      initialPhoneCall: false,
-      dedicatedSpeakingSlot: null,
-      exhibitionSpace: "",
-      receivedProgrammeAdvert: false,
-      customsSupport: false,
-      bookedHotel: false,
-      numberOfAttendees: 0,
-      attendeeNames: "",
-      contactEmail: "",
-      status: "pending",
-    })
+  const handleAddSponsor = async () => {
+    try {
+      await addSponsor({
+        name: "New Sponsor",
+        initialContact: false,
+        initialPhoneCall: false,
+        dedicatedSpeakingSlot: null,
+        exhibitionSpace: "",
+        receivedProgrammeAdvert: false,
+        customsSupport: false,
+        bookedHotel: false,
+        numberOfAttendees: 0,
+        attendeeNames: "",
+        contactEmail: "",
+        status: "pending",
+      })
+    } catch (error) {
+      console.error('Failed to add sponsor:', error)
+    }
   }
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error}</div>
 
   return (
     <div className="w-full">
