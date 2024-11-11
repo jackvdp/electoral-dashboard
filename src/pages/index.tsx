@@ -10,7 +10,7 @@ import { TasksProvider } from "@/hooks/use-tasks";
 type View = 'sponsors' | 'tasks';
 
 export default function DashboardPage() {
-  const [currentView, setCurrentView] = useState<View>('sponsors');
+  const [currentView, setCurrentView] = useState<View>('tasks');
 
   return (
     <TasksProvider>
