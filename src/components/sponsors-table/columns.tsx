@@ -152,8 +152,6 @@ export const createColumns = ({
                             <div className="flex items-center space-x-2">
                                 <EditableCell
                                     value={email || ''}
-                                    row={row}
-                                    column={{ id: key }}
                                     onUpdate={(value) => updateSponsor(row.original.id, { [key]: value })}
                                 />
                                 {email && (
@@ -175,8 +173,6 @@ export const createColumns = ({
                     column.cell = ({ row }) => (
                         <EditableCell
                             value={row.getValue(key)?.toString() || '0'}
-                            row={row}
-                            column={{ id: key }}
                             onUpdate={(value) => updateSponsor(row.original.id, { [key]: parseInt(value, 10) })}
                         />
                     )
@@ -186,8 +182,6 @@ export const createColumns = ({
                     column.cell = ({ row }) => (
                         <EditableCell
                             value={row.getValue(key)?.toString() || ''}
-                            row={row}
-                            column={{ id: key }}
                             onUpdate={(value) => updateSponsor(row.original.id, { [key]: value })}
                         />
                     )

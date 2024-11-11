@@ -3,15 +3,11 @@ import { Input } from "@/components/ui/input";
 
 interface EditableCellProps {
     value: string;
-    row: any;
-    column: any;
     onUpdate: (value: string) => void;
 }
 
 export function EditableCell({
     value: initialValue,
-    row,
-    column,
     onUpdate,
 }: EditableCellProps) {
     const [value, setValue] = useState(initialValue);
