@@ -6,8 +6,9 @@ export interface Sponsor {
     initialContact: boolean
     exhibitionSpace: boolean
     specialRequirments: string
-    receivedProgrammeAdvert: boolean
+    advertInProgramme: boolean
     bookedHotel: boolean
+    flightDetails: string
     numberOfAttendees: number
     attendeeNames: string | null
     contactEmail: string | null

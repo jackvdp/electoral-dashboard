@@ -11,10 +11,8 @@ export default async function handler(
       const sponsors = await prisma.sponsor.findMany({
         orderBy: { createdAt: 'desc' }
       })
-      console.log("GET sponsors", sponsors)
       return res.status(200).json(sponsors)
     } catch (error) {
-      console.log("GET error", error)
       return res.status(500).json({ error: 'Failed to fetch sponsors' })
     }
   }

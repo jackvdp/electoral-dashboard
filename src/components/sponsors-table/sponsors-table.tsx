@@ -83,9 +83,10 @@ export function SponsorsTable() {
       await addSponsor({
         name: "New Sponsor",
         initialContact: false,
-        exhibitionSpace: "",
-        receivedProgrammeAdvert: false,
+        exhibitionSpace: false,
+        advertInProgramme: false,
         bookedHotel: false,
+        flightDetails: "",
         numberOfAttendees: 0,
         attendeeNames: "",
         contactEmail: "",

@@ -36,6 +36,11 @@ const COLUMN_CONFIG: Record<keyof Partial<Sponsor>, ColumnConfig> = {
         show: true,
         type: 'checkbox'
     },
+    advertInProgramme: {
+        title: 'Recieved Advert',
+        show: true,
+        type: 'checkbox'
+    },
     numberOfAttendees: {
         title: 'Attendees',
         show: true,
