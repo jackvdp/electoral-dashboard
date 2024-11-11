@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback, useState, ReactNode } from 'react'
-import type { Sponsor } from '@/types'
+import { Sponsor } from "@prisma/client"
 
 interface SponsorsContextType {
     sponsors: Sponsor[]

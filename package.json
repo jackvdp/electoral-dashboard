@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "migrate": "ts-node -P tsconfig.scripts.json src/scripts/migrate.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

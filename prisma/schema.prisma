@@ -18,10 +18,8 @@ model Sponsor {
   name                    String
   initialContact          Boolean  @default(false)
   exhibitionSpace         Boolean  @default(false)
-  advertInProgramme       Boolean  @default(false)
   specialRequirments      String   @default("")
   receivedProgrammeAdvert Boolean  @default(false)
-  bookedHotel             Boolean  @default(false)
   flightDetails           String   @default("")
   numberOfAttendees       Int      @default(0)
   attendeeNames           String?

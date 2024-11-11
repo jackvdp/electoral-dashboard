@@ -84,8 +84,7 @@ export function SponsorsTable() {
         name: "New Sponsor",
         initialContact: false,
         exhibitionSpace: false,
-        advertInProgramme: false,
-        bookedHotel: false,
+        receivedProgrammeAdvert: false,
         flightDetails: "",
         numberOfAttendees: 0,
         attendeeNames: "",
@@ -146,7 +145,7 @@ export function SponsorsTable() {
         </DropdownMenu>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="text-black">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

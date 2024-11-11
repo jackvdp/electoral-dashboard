@@ -20,6 +20,10 @@ interface ColumnConfig {
 }
 
 const COLUMN_CONFIG: Record<keyof Partial<Sponsor>, ColumnConfig> = {
+    id: {
+        title: 'ID',
+        show: false
+    },
     name: {
         title: 'Company',
         show: true,
@@ -36,8 +40,8 @@ const COLUMN_CONFIG: Record<keyof Partial<Sponsor>, ColumnConfig> = {
         show: true,
         type: 'checkbox'
     },
-    advertInProgramme: {
-        title: 'Recieved Advert',
+    receivedProgrammeAdvert: {
+        title: 'Received Programme Advert',
         show: true,
         type: 'checkbox'
     },
@@ -45,7 +49,11 @@ const COLUMN_CONFIG: Record<keyof Partial<Sponsor>, ColumnConfig> = {
         title: 'Attendees',
         show: true,
         type: 'number',
-        sortable: true
+    },
+    flightDetails: {
+        title: 'Flight Details',
+        show: true,
+        type: 'text'
     },
     contactEmail: {
         title: 'Contact Email',
@@ -57,6 +65,21 @@ const COLUMN_CONFIG: Record<keyof Partial<Sponsor>, ColumnConfig> = {
         show: true,
         type: 'text'
     },
+    attendeeNames: {
+        title: 'Attendee Names',
+        show: false,
+        type: 'text'
+    },
+    createdAt: {
+        title: 'Created At',
+        show: false,
+        type: 'text'
+    },
+    updatedAt: {
+        title: 'Updated At',
+        show: false,
+        type: 'text'
+    }
 }
 
 interface CreateColumnsProps {
