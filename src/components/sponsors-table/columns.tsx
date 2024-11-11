@@ -11,6 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import sendEmail from "@/lib/sendEmail"
 
 interface ColumnConfig {
     title: string
@@ -158,7 +159,7 @@ export const createColumns = ({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => window.location.href = `mailto:${email}`}
+                                        onClick={() => sendEmail(email)}
                                         className="h-8 w-8 p-0"
                                     >
                                         <Mail className="h-4 w-4" />
