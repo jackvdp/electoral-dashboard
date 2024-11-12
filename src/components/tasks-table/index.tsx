@@ -58,6 +58,8 @@ export function TasksTable() {
         fetchTasks
     } = useTasks()
 
+    const [globalFilter, setGlobalFilter] = React.useState("")
+
     const columns = React.useMemo(
         () => createColumns({ updateTask, deleteTask }),
         [updateTask, deleteTask]
@@ -67,14 +69,23 @@ export function TasksTable() {
         fetchTasks()
     }, [fetchTasks])
 
-    // Group tasks by section
+    // Group tasks by section, applying global filter first
     const tasksBySection = React.useMemo(() => {
+        const filteredTasks = tasks.filter(task =>
+            task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
+            task.details?.toLowerCase().includes(globalFilter.toLowerCase())
+        )
+
         const sections = tasks.length === 0 ? DEFAULT_SECTIONS : [...new Set(tasks.map(task => task.section))]
         return sections.reduce((acc, section) => {
-            acc[section] = tasks.filter(task => task.section === section)
+            const sectionTasks = filteredTasks.filter(task => task.section === section)
+            // Only include sections that have matching tasks or if there's no filter
+            if (sectionTasks.length > 0 || !globalFilter) {
+                acc[section] = sectionTasks
+            }
             return acc
         }, {} as Record<string, Task[]>)
-    }, [tasks])
+    }, [tasks, globalFilter])
 
     const handleAddSection = () => {
         const sectionName = prompt("Enter new section name:")
@@ -89,15 +100,39 @@ export function TasksTable() {
         }
     }
 
+    const stats = React.useMemo(() => {
+        const total = tasks.length
+        const completed = tasks.filter(t => t.completed).length
+        return { total, completed }
+    }, [tasks])
+
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-end">
-                <Button onClick={handleAddSection}>
-                    <Plus className="mr-2 h-4 w-4" /> Add New Section
-                </Button>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 flex-1">
+                    <Input
+                        placeholder="Filter all tasks..."
+                        value={globalFilter}
+                        onChange={(event) => setGlobalFilter(event.target.value)}
+                        className="max-w-sm"
+                    />
+                    {globalFilter && (
+                        <div className="text-sm text-muted-foreground">
+                            Found {Object.values(tasksBySection).reduce((acc, tasks) => acc + tasks.length, 0)} tasks
+                        </div>
+                    )}
+                </div>
+                <div className="flex items-center space-x-4">
+                    <div className="text-sm text-muted-foreground">
+                        {stats.completed} of {stats.total} tasks completed ({Math.round((stats.completed / stats.total) * 100)}%)
+                    </div>
+                    <Button onClick={handleAddSection}>
+                        <Plus className="mr-2 h-4 w-4" /> Add New Section
+                    </Button>
+                </div>
             </div>
             {Object.entries(tasksBySection).map(([section, sectionTasks]) => (
                 <SectionTable
@@ -112,6 +147,7 @@ export function TasksTable() {
     )
 }
 
+
 interface SectionTableProps {
     section: string
     tasks: Task[]
@@ -121,7 +157,6 @@ interface SectionTableProps {
 
 function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
     const sortedTasks = React.useMemo(() => {
@@ -134,13 +169,10 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         state: {
             sorting,
-            columnFilters,
             columnVisibility,
         },
     })
@@ -164,14 +196,6 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">{section}</h2>
                 <div className="flex items-center space-x-2">
-                    <Input
-                        placeholder="Filter tasks..."
-                        value={(table.getColumn("task")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("task")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
                     <Button
                         onClick={handleAddTask}
                         size="sm"
