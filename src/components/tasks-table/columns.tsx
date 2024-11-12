@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Task } from "@prisma/client"
 import { Button } from "@/components/ui/button"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, MoveUp, MoveDown, Trash2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { EditableCell } from "../reusables/editable-cell"
 import {
@@ -9,6 +9,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -25,40 +26,67 @@ export const createColumns = ({
         {
             accessorKey: "completed",
             header: "Completed",
+            size: 20,
             cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getValue("completed") as boolean}
-                    onCheckedChange={(checked) => {
-                        updateTask(row.original.id, { completed: !!checked })
-                    }}
-                    aria-label="Select task"
-                />
+                <div className="flex justify-center">
+                    <Checkbox
+                        checked={row.getValue("completed") as boolean}
+                        onCheckedChange={(checked) => {
+                            updateTask(row.original.id, { completed: !!checked })
+                        }}
+                        aria-label="Select task"
+                    />
+                </div>
             ),
         },
         {
             accessorKey: "task",
             header: "Task",
+            size: 100,
             cell: ({ row }) => (
-                <EditableCell
-                    value={(row.getValue("task") as string) || ""}
-                    onUpdate={(value: string) => updateTask(row.original.id, { task: value })}
-                />
+                <div className={row.original.completed ? "opacity-50" : ""}>
+                    <EditableCell
+                        value={(row.getValue("task") as string) || ""}
+                        onUpdate={(value: string) => updateTask(row.original.id, { task: value })}
+                    />
+                </div>
             ),
         },
         {
             accessorKey: "details",
             header: "Further Details",
             cell: ({ row }) => (
-                <EditableCell
-                    value={(row.getValue("details") as string) || ""}
-                    onUpdate={(value: string) => updateTask(row.original.id, { details: value })}
-                />
+                <div className={row.original.completed ? "opacity-50" : ""}>
+                    <EditableCell
+                        value={(row.getValue("details") as string) || ""}
+                        onUpdate={(value: string) => updateTask(row.original.id, { details: value })}
+                    />
+                </div>
             ),
         },
         {
             id: "actions",
-            cell: ({ row }) => {
+            size: 20,
+            cell: ({ row, table }) => {
                 const task = row.original
+                const allTasks = (table.options.data as Task[])
+                const currentIndex = allTasks.findIndex(t => t.id === task.id)
+                const isFirst = currentIndex === 0
+                const isLast = currentIndex === allTasks.length - 1
+
+                const handleMove = async (direction: 'up' | 'down') => {
+                    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+                    if (newIndex < 0 || newIndex >= allTasks.length) return
+
+                    const targetTask = allTasks[newIndex]
+                    const currentOrder = task.order
+                    const targetOrder = targetTask.order
+
+                    // Swap orders
+                    await updateTask(task.id, { order: targetOrder })
+                    await updateTask(targetTask.id, { order: currentOrder })
+                }
+
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -69,8 +97,24 @@ export const createColumns = ({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => deleteTask(task.id)}>
-                                Delete task
+                            <DropdownMenuItem
+                                onClick={() => handleMove('up')}
+                                disabled={isFirst}
+                            >
+                                <MoveUp className="mr-2 h-4 w-4" /> Move Up
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => handleMove('down')}
+                                disabled={isLast}
+                            >
+                                <MoveDown className="mr-2 h-4 w-4" /> Move Down
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                                onClick={() => deleteTask(task.id)}
+                                className="text-red-600"
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete task
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

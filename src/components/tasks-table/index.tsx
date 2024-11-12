@@ -124,8 +124,12 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
+    const sortedTasks = React.useMemo(() => {
+        return [...tasks].sort((a, b) => a.order - b.order)
+    }, [tasks])
+
     const table = useReactTable({
-        data: tasks,
+        data: sortedTasks,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -207,18 +211,23 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    )
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead
+                                        key={header.id}
+                                        style={{
+                                            width: header.getSize(),
+                                            minWidth: header.column.columnDef.minSize,
+                                            maxWidth: header.column.columnDef.maxSize,
+                                        }}
+                                    >
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -230,7 +239,14 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell
+                                            key={cell.id}
+                                            style={{
+                                                width: cell.column.getSize(),
+                                                minWidth: cell.column.columnDef.minSize,
+                                                maxWidth: cell.column.columnDef.maxSize,
+                                            }}
+                                        >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
