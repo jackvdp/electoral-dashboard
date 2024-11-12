@@ -325,9 +325,22 @@ function SectionTable({ section, tasks, columns, addTask, updateTask }: SectionT
 }
 
 function getColumnType(index: number, columnId: string): string {
+    // First, check by index for the select/checkbox column
     if (index === 0) return 'checkbox';
-    if (columnId === 'actions') return 'actions';
-    if (columnId === 'task') return 'task';
-    if (columnId === 'details') return 'details';
-    return '';
+
+    // Then check by columnId for other columns
+    switch (columnId) {
+        case 'completed':
+            return 'completed';
+        case 'task':
+            return 'task';
+        case 'details':
+            return 'details';
+        case 'actions':
+            return 'actions';
+        default:
+            // For debugging
+            console.log('Unknown column type:', columnId);
+            return '';
+    }
 }
