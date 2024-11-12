@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus } from "lucide-react"
@@ -9,6 +8,7 @@ import { useEffect } from "react"
 import { createColumns } from "./columns"
 import { Task } from "@prisma/client"
 import SectionTable from "./SectionTable"
+import { useMemo, useState } from "react"
 
 export function TasksTable() {
     const {
@@ -21,9 +21,9 @@ export function TasksTable() {
         fetchTasks
     } = useTasks()
 
-    const [globalFilter, setGlobalFilter] = React.useState("")
+    const [globalFilter, setGlobalFilter] = useState("")
 
-    const columns = React.useMemo(
+    const columns = useMemo(
         () => createColumns({ updateTask, deleteTask }),
         [updateTask, deleteTask]
     )
@@ -32,7 +32,7 @@ export function TasksTable() {
         fetchTasks()
     }, [fetchTasks])
 
-    const tasksBySection = React.useMemo(() => {
+    const tasksBySection = useMemo(() => {
         const filteredTasks = globalFilter
             ? tasks.filter(task =>
                 task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
@@ -72,7 +72,7 @@ export function TasksTable() {
         }
     }
 
-    const stats = React.useMemo(() => {
+    const stats = useMemo(() => {
         const total = tasks.length
         const completed = tasks.filter(t => t.completed).length
         return { total, completed }
