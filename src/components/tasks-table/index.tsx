@@ -34,6 +34,7 @@ import { useTasks } from "@/hooks/use-tasks"
 import { useEffect } from "react"
 import { createColumns } from "./columns"
 import { Task } from "@prisma/client"
+import { EditableTitle } from "./editable-title"
 
 export function TasksTable() {
     const {
@@ -59,23 +60,33 @@ export function TasksTable() {
 
     // Group tasks by section, applying global filter first
     const tasksBySection = React.useMemo(() => {
-        const filteredTasks = tasks.filter(task =>
-            task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
-            task.details?.toLowerCase().includes(globalFilter.toLowerCase())
-        )
+        // Only apply filter if there is a filter term
+        const filteredTasks = globalFilter
+            ? tasks.filter(task =>
+                task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
+                task.details?.toLowerCase().includes(globalFilter.toLowerCase())
+            )
+            : tasks;  // If no filter, use all tasks
 
-        // Get unique sections from existing tasks
-        const sections = [...new Set(tasks.map(task => task.section))]
-        
-        return sections.reduce((acc, section) => {
-            const sectionTasks = filteredTasks.filter(task => task.section === section)
-            // Only include sections that have matching tasks or if there's no filter
+        // Get unique sections from ALL tasks, not just filtered ones
+        const sections = [...tasks.map(task => task.section)];
+
+        const reduced = sections.reduce((acc, section) => {
+            // For each section, get the tasks that belong to it from the filtered set
+            const sectionTasks = filteredTasks.filter(task => task.section === section);
+
+            // Only include sections that have tasks (when filtering) or include all sections when not filtering
             if (sectionTasks.length > 0 || !globalFilter) {
-                acc[section] = sectionTasks
+                acc[section] = sectionTasks;
             }
-            return acc
-        }, {} as Record<string, Task[]>)
-    }, [tasks, globalFilter])
+            return acc;
+        }, {} as Record<string, Task[]>);
+        
+        // log whether there is a task with the task name "find photographer"
+        console.log("**** 1", reduced)
+
+        return reduced;
+    }, [tasks, globalFilter]);
 
     const handleAddSection = () => {
         const sectionName = prompt("Enter new section name:")
@@ -140,6 +151,7 @@ export function TasksTable() {
                         tasks={sectionTasks}
                         columns={columns}
                         addTask={addTask}
+                        updateTask={updateTask}
                     />
                 ))}
             {Object.keys(tasksBySection).length === 0 && !globalFilter && (
@@ -157,9 +169,10 @@ interface SectionTableProps {
     tasks: Task[]
     columns: ColumnDef<Task>[]
     addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
+    updateTask: (id: string, updates: Partial<Task>) => Promise<void>
 }
 
-function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
+function SectionTable({ section, tasks, columns, addTask, updateTask }: SectionTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
@@ -171,7 +184,6 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
         data: sortedTasks,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
@@ -195,10 +207,27 @@ function SectionTable({ section, tasks, columns, addTask }: SectionTableProps) {
         }
     }
 
+    const handleSectionUpdate = async (newTitle: string) => {
+        // Update all tasks in this section
+        try {
+            await Promise.all(
+                tasks.map(task =>
+                    updateTask(task.id, { section: newTitle })
+                )
+            );
+        } catch (error) {
+            console.error('Failed to update section name:', error);
+            throw error; // Let the EditableTitle component handle the error
+        }
+    };
+
     return (
         <div className="rounded-md border p-4 text-black">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">{section}</h2>
+                <EditableTitle
+                    value={section}
+                    onUpdate={handleSectionUpdate}
+                />
                 <div className="flex items-center space-x-2">
                     <Button
                         onClick={handleAddTask}
