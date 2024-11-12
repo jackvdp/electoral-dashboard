@@ -26,7 +26,7 @@
 .cell[data-column="checkbox"],
 .cell[data-column="completed"],
 .cell[data-column="actions"] {
-  width: 5%;
+  width: 100px;
   /* This makes the column as narrow as possible */
   white-space: nowrap;
   padding-left: 8px;
@@ -59,4 +59,16 @@ thead .cell {
 .cell[data-column="completed"],
 .cell[data-column="actions"] {
   text-align: center;
+}
+
+.table :global(thead) {
+  @apply bg-white text-gray-900 dark:bg-white dark:text-gray-900;
+}
+
+.table :global(thead tr) {
+  @apply border-b border-gray-200;
+}
+
+.table :global(thead th) {
+  @apply bg-white text-gray-900 dark:bg-white dark:text-gray-900 font-medium;
 }
