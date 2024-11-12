@@ -35,18 +35,6 @@ import { useEffect } from "react"
 import { createColumns } from "./columns"
 import { Task } from "@prisma/client"
 
-const DEFAULT_SECTIONS = [
-    "Immediate Actions",
-    "PRE- EVENT LOGISTICS/COMMISSION SUPPORT",
-    "NOMINATIONS",
-    "AWARDS PANEL",
-    "CONFERENCE",
-    "AWARDS",
-    "BROCHURE & WEBSITE",
-    "Staffing",
-    "Post Event"
-]
-
 export function TasksTable() {
     const {
         tasks,
@@ -76,7 +64,9 @@ export function TasksTable() {
             task.details?.toLowerCase().includes(globalFilter.toLowerCase())
         )
 
-        const sections = tasks.length === 0 ? DEFAULT_SECTIONS : [...new Set(tasks.map(task => task.section))]
+        // Get unique sections from existing tasks
+        const sections = [...new Set(tasks.map(task => task.section))]
+        
         return sections.reduce((acc, section) => {
             const sectionTasks = filteredTasks.filter(task => task.section === section)
             // Only include sections that have matching tasks or if there's no filter
@@ -90,6 +80,13 @@ export function TasksTable() {
     const handleAddSection = () => {
         const sectionName = prompt("Enter new section name:")
         if (sectionName) {
+            // Check if section already exists
+            const sectionExists = Object.keys(tasksBySection).includes(sectionName)
+            if (sectionExists) {
+                alert("This section already exists. Please choose a different name.")
+                return
+            }
+
             addTask({
                 task: "New Task",
                 details: "",
@@ -127,22 +124,29 @@ export function TasksTable() {
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="text-sm text-muted-foreground">
-                        {stats.completed} of {stats.total} tasks completed ({Math.round((stats.completed / stats.total) * 100)}%)
+                        {stats.completed} of {stats.total} tasks completed ({Math.round((stats.completed / stats.total) * 100 || 0)}%)
                     </div>
                     <Button onClick={handleAddSection}>
                         <Plus className="mr-2 h-4 w-4" /> Add New Section
                     </Button>
                 </div>
             </div>
-            {Object.entries(tasksBySection).map(([section, sectionTasks]) => (
-                <SectionTable
-                    key={section}
-                    section={section}
-                    tasks={sectionTasks}
-                    columns={columns}
-                    addTask={addTask}
-                />
-            ))}
+            {Object.entries(tasksBySection)
+                .sort(([a], [b]) => a.localeCompare(b)) // Sort sections alphabetically
+                .map(([section, sectionTasks]) => (
+                    <SectionTable
+                        key={section}
+                        section={section}
+                        tasks={sectionTasks}
+                        columns={columns}
+                        addTask={addTask}
+                    />
+                ))}
+            {Object.keys(tasksBySection).length === 0 && !globalFilter && (
+                <div className="text-center py-8 text-muted-foreground">
+                    No sections yet. Click "Add New Section" to get started.
+                </div>
+            )}
         </div>
     )
 }
