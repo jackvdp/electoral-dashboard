@@ -1,0 +1,32 @@
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Using attribute selectors for more specific targeting */
+.cell[data-column="actions"] {
+  width: 50px;
+}
+
+.cell[data-column="checkbox"] {
+  width: 50px;
+}
+
+.cell[data-column="task"] {
+  width: 400px;
+}
+
+.cell[data-column="details"] {
+  width: auto;
+}

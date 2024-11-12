@@ -35,6 +35,7 @@ import { useEffect } from "react"
 import { createColumns } from "./columns"
 import { Task } from "@prisma/client"
 import { EditableTitle } from "./editable-title"
+import styles from './SectionTable.module.css';
 
 export function TasksTable() {
     const {
@@ -81,7 +82,7 @@ export function TasksTable() {
             }
             return acc;
         }, {} as Record<string, Task[]>);
-        
+
         // log whether there is a task with the task name "find photographer"
         console.log("**** 1", reduced)
 
@@ -263,19 +264,16 @@ function SectionTable({ section, tasks, columns, addTask, updateTask }: SectionT
                     </DropdownMenu>
                 </div>
             </div>
-            <div className="rounded-md border">
-                <Table>
+            <div className={styles.tableContainer}>
+                <Table className={styles.table}>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
+                                {headerGroup.headers.map((header, index) => (
                                     <TableHead
                                         key={header.id}
-                                        style={{
-                                            width: header.getSize(),
-                                            minWidth: header.column.columnDef.minSize,
-                                            maxWidth: header.column.columnDef.maxSize,
-                                        }}
+                                        className={styles.cell}
+                                        data-column={getColumnType(index, header.id)}
                                     >
                                         {header.isPlaceholder
                                             ? null
@@ -295,14 +293,11 @@ function SectionTable({ section, tasks, columns, addTask, updateTask }: SectionT
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell) => (
+                                    {row.getVisibleCells().map((cell, index) => (
                                         <TableCell
                                             key={cell.id}
-                                            style={{
-                                                width: cell.column.getSize(),
-                                                minWidth: cell.column.columnDef.minSize,
-                                                maxWidth: cell.column.columnDef.maxSize,
-                                            }}
+                                            className={styles.cell}
+                                            data-column={getColumnType(index, cell.column.id)}
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
@@ -327,4 +322,12 @@ function SectionTable({ section, tasks, columns, addTask, updateTask }: SectionT
             </div>
         </div>
     )
+}
+
+function getColumnType(index: number, columnId: string): string {
+    if (index === 0) return 'checkbox';
+    if (columnId === 'actions') return 'actions';
+    if (columnId === 'task') return 'task';
+    if (columnId === 'details') return 'details';
+    return '';
 }
