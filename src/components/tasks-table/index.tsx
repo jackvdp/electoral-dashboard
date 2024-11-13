@@ -10,6 +10,7 @@ import { Task } from "@prisma/client"
 import SectionTable from "./SectionTable"
 import { useMemo, useState } from "react"
 import { useUsers } from "@/hooks/use-users"
+import { UserFilterDropdown } from "./UserFilterButton"
 
 export function TasksTable() {
     const {
@@ -47,7 +48,6 @@ export function TasksTable() {
     }, [tasks]);
 
     const tasksBySection = useMemo(() => {
-        // Apply both text and user filters
         const filteredTasks = tasks.filter(task => {
             const matchesText = !globalFilter || (
                 task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
@@ -113,17 +113,12 @@ export function TasksTable() {
                         onChange={(event) => setGlobalFilter(event.target.value)}
                         className="max-w-sm"
                     />
-                    <select
-                        value={userFilter || ''}
-                        onChange={(e) => setUserFilter(e.target.value || null)}
-                        className="h-10 rounded-md border border-input px-3"
-                    >
-                        <option value="">All Users</option>
-                        {users.map(user => (
-                            <option key={user.name} value={user.name}>{user.name}</option>
-                        ))}
-                    </select>
-                    <Button onClick={handleAddUser} variant="outline" size="sm">
+                    <UserFilterDropdown
+                        users={users}
+                        selectedUser={userFilter}
+                        onUserSelect={setUserFilter}
+                    />
+                    <Button onClick={handleAddUser} variant="ghost" className="text-black">
                         Add User
                     </Button>
                 </div>
