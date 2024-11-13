@@ -36,7 +36,6 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
     const addSponsor = useCallback(async (
         newSponsor: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>
     ) => {
-        setIsLoading(true)
         setError(null)
         try {
             const response = await fetch('/api/sponsors', {
@@ -50,8 +49,6 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to add sponsor')
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }, [])
 
@@ -59,7 +56,6 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         id: string,
         updates: Partial<Sponsor>
     ) => {
-        setIsLoading(true)
         setError(null)
         try {
             const response = await fetch(`/api/sponsors/${id}`, {
@@ -77,13 +73,10 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to update sponsor')
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }, [])
 
     const deleteSponsor = useCallback(async (id: string) => {
-        setIsLoading(true)
         setError(null)
         try {
             const response = await fetch(`/api/sponsors/${id}`, {
@@ -94,8 +87,6 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to delete sponsor')
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }, [])
 

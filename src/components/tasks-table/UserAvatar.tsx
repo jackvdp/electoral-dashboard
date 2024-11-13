@@ -5,12 +5,6 @@ export interface User {
     color?: string
 }
 
-interface UserAvatarProps {
-    user: User | null
-    size?: 'sm' | 'md' | 'lg'
-    onClick?: () => void
-}
-
 export const COLORS = [
     'bg-red-500',
     'bg-blue-500',

@@ -36,7 +36,6 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     const addTask = useCallback(async (
         newTask: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>
     ) => {
-        setIsLoading(true)
         setError(null)
         try {
             const response = await fetch('/api/tasks', {
@@ -50,8 +49,6 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to add task')
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }, [])
 
@@ -59,7 +56,6 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         id: string,
         updates: Partial<Task>
     ) => {
-        setIsLoading(true)
         setError(null)
         try {
             const response = await fetch(`/api/tasks/${id}`, {
@@ -77,8 +73,6 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to update task')
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }, [])
 
@@ -110,8 +104,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <TasksContext.Provider value= { value } >
-        { children }
+        <TasksContext.Provider value={value} >
+            {children}
         </TasksContext.Provider>
     )
 }

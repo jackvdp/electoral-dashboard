@@ -27,7 +27,7 @@ export function useUsers() {
                 .map(task => task.assignedToId as string)
         )).map(name => ({
             name,
-            color: COLORS[Math.floor(Math.random() * COLORS.length)]
+            color: COLORS[(indexOfUser(users, name) % COLORS.length)]
         }));
         setUsers(uniqueUsers);
     };
@@ -38,4 +38,8 @@ export function useUsers() {
         removeUser,
         syncUsersFromTasks
     };
+}
+
+function indexOfUser(users: User[], name: string): number {
+    return users.findIndex(user => user.name === name);
 }
