@@ -131,7 +131,7 @@ export const createColumns = ({
               return (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className={`h-8 w-8 p-0 ${task.completed ? "opacity-50" : ""}`}>
                       <UserAvatar user={assignedUser} />
                     </Button>
                   </DropdownMenuTrigger>
