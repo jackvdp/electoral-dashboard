@@ -9,6 +9,7 @@ import { createColumns } from "./columns"
 import { Task } from "@prisma/client"
 import SectionTable from "./SectionTable"
 import { useMemo, useState } from "react"
+import { useUsers } from "@/hooks/use-users"
 
 export function TasksTable() {
     const {
@@ -21,12 +22,21 @@ export function TasksTable() {
         fetchTasks
     } = useTasks()
 
+    const { users, addUser } = useUsers()
     const [globalFilter, setGlobalFilter] = useState("")
+    const [userFilter, setUserFilter] = useState<string | null>(null)
 
     const columns = useMemo(
-        () => createColumns({ updateTask, deleteTask }),
-        [updateTask, deleteTask]
+        () => createColumns({ updateTask, deleteTask, users }),
+        [updateTask, deleteTask, users]
     )
+
+    const handleAddUser = () => {
+        const name = prompt("Enter user name:")
+        if (name) {
+            addUser(name)
+        }
+    }
 
     useEffect(() => {
         fetchTasks()
@@ -67,7 +77,8 @@ export function TasksTable() {
                 details: "",
                 completed: false,
                 section: sectionName,
-                order: 0
+                order: 0,
+                assignedToId: null
             })
         }
     }
@@ -91,11 +102,19 @@ export function TasksTable() {
                         onChange={(event) => setGlobalFilter(event.target.value)}
                         className="max-w-sm"
                     />
-                    {globalFilter && (
-                        <div className="text-sm text-muted-foreground">
-                            Found {Object.values(tasksBySection).reduce((acc, tasks) => acc + tasks.length, 0)} tasks
-                        </div>
-                    )}
+                    <select
+                        value={userFilter || ''}
+                        onChange={(e) => setUserFilter(e.target.value || null)}
+                        className="h-10 rounded-md border border-input px-3"
+                    >
+                        <option value="">All Users</option>
+                        {users.map(user => (
+                            <option key={user.id} value={user.id}>{user.name}</option>
+                        ))}
+                    </select>
+                    <Button onClick={handleAddUser} variant="outline" size="sm">
+                        Add User
+                    </Button>
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="text-sm text-muted-foreground">

@@ -64,7 +64,8 @@ export default function SectionTable({ section, tasks, columns, addTask, updateT
                 details: "",
                 completed: false,
                 section,
-                order: tasks.length
+                order: tasks.length,
+                assignedToId: null,
             })
         } catch (error) {
             console.error('Failed to add task:', error)
@@ -222,6 +223,8 @@ function getColumnType(index: number, columnId: string): string {
             return 'details';
         case 'actions':
             return 'actions';
+        case 'assignedTo':
+            return 'assignedTo';
         default:
             console.log('Unknown column type:', columnId);
             return '';

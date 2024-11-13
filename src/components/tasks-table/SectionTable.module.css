@@ -25,6 +25,7 @@
 /* Compact cells - using width: auto to take minimum space needed */
 .cell[data-column="checkbox"],
 .cell[data-column="completed"],
+.cell[data-column="assignedTo"],
 .cell[data-column="actions"] {
   width: 100px;
   /* This makes the column as narrow as possible */
@@ -57,6 +58,7 @@ thead .cell {
 /* Ensure checkboxes and action buttons are centered */
 .cell[data-column="checkbox"],
 .cell[data-column="completed"],
+.cell[data-column="assignedTo"],
 .cell[data-column="actions"] {
   text-align: center;
 }

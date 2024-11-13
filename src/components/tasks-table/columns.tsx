@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { MoreHorizontal, MoveUp, MoveDown, Trash2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { EditableCell } from "../reusables/editable-cell"
+import { User, UserAvatar, UserSelect } from "./UserAvatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,17 +17,18 @@ import {
 interface CreateColumnsProps {
     updateTask: (id: string, updates: Partial<Task>) => Promise<void>
     deleteTask: (id: string) => Promise<void>
+    users: User[]
 }
 
 export const createColumns = ({
     updateTask,
     deleteTask,
+    users
 }: CreateColumnsProps): ColumnDef<Task>[] => {
     return [
         {
             accessorKey: "completed",
             header: "Completed",
-            size: 20,
             cell: ({ row }) => (
                 <div className="flex justify-center">
                     <Checkbox
@@ -42,7 +44,6 @@ export const createColumns = ({
         {
             accessorKey: "task",
             header: "Task",
-            size: 100,
             cell: ({ row }) => (
                 <div className={row.original.completed ? "opacity-50" : ""}>
                     <EditableCell
@@ -66,7 +67,6 @@ export const createColumns = ({
         },
         {
             id: "actions",
-            size: 20,
             cell: ({ row, table }) => {
                 const task = row.original
                 const allTasks = (table.options.data as Task[])
@@ -110,7 +110,7 @@ export const createColumns = ({
                                 <MoveDown className="mr-2 h-4 w-4" /> Move Down
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                                 onClick={() => deleteTask(task.id)}
                                 className="text-red-600"
                             >
@@ -121,5 +121,32 @@ export const createColumns = ({
                 )
             },
         },
+        {
+            id: "assignedTo",
+            header: "Assigned To",
+            cell: ({ row }) => {
+              const task = row.original
+              const assignedUser = users.find(u => u.id === task.assignedToId) ?? null
+          
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <UserAvatar user={assignedUser} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px]">
+                    <UserSelect
+                      users={users}
+                      selectedUser={assignedUser}
+                      onSelect={(user) => {
+                        updateTask(task.id, { assignedToId: user?.id || null })
+                      }}
+                    />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
+            }
+          }
     ]
 }
