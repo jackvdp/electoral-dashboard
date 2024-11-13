@@ -22,7 +22,7 @@ export function TasksTable() {
         fetchTasks
     } = useTasks()
 
-    const { users, addUser } = useUsers()
+    const { users, addUser, syncUsersFromTasks } = useUsers()
     const [globalFilter, setGlobalFilter] = useState("")
     const [userFilter, setUserFilter] = useState<string | null>(null)
 
@@ -41,6 +41,10 @@ export function TasksTable() {
     useEffect(() => {
         fetchTasks()
     }, [fetchTasks])
+
+    useEffect(() => {
+        syncUsersFromTasks(tasks);
+    }, [tasks]);
 
     const tasksBySection = useMemo(() => {
         const filteredTasks = globalFilter
@@ -109,7 +113,7 @@ export function TasksTable() {
                     >
                         <option value="">All Users</option>
                         {users.map(user => (
-                            <option key={user.id} value={user.id}>{user.name}</option>
+                            <option key={user.name} value={user.name}>{user.name}</option>
                         ))}
                     </select>
                     <Button onClick={handleAddUser} variant="outline" size="sm">

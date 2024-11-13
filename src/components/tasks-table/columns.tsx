@@ -126,7 +126,7 @@ export const createColumns = ({
             header: "Assigned To",
             cell: ({ row }) => {
               const task = row.original
-              const assignedUser = users.find(u => u.id === task.assignedToId) ?? null
+              const assignedUser = users.find(u => u.name === task.assignedToId) ?? null
           
               return (
                 <DropdownMenu>
@@ -140,7 +140,7 @@ export const createColumns = ({
                       users={users}
                       selectedUser={assignedUser}
                       onSelect={(user) => {
-                        updateTask(task.id, { assignedToId: user?.id || null })
+                        updateTask(task.id, { assignedToId: user?.name || null })
                       }}
                     />
                   </DropdownMenuContent>
