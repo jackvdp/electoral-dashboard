@@ -47,25 +47,30 @@ export function TasksTable() {
     }, [tasks]);
 
     const tasksBySection = useMemo(() => {
-        const filteredTasks = globalFilter
-            ? tasks.filter(task =>
+        // Apply both text and user filters
+        const filteredTasks = tasks.filter(task => {
+            const matchesText = !globalFilter || (
                 task.task.toLowerCase().includes(globalFilter.toLowerCase()) ||
                 task.details?.toLowerCase().includes(globalFilter.toLowerCase())
-            )
-            : tasks;
+            );
 
-        const sections = [...tasks.map(task => task.section)];
+            const matchesUser = !userFilter || task.assignedToId === userFilter;
+
+            return matchesText && matchesUser;
+        });
+
+        const sections = [...new Set(tasks.map(task => task.section))];
 
         const reduced = sections.reduce((acc, section) => {
             const sectionTasks = filteredTasks.filter(task => task.section === section);
-            if (sectionTasks.length > 0 || !globalFilter) {
+            if (sectionTasks.length > 0 || (!globalFilter && !userFilter)) {
                 acc[section] = sectionTasks;
             }
             return acc;
         }, {} as Record<string, Task[]>);
 
         return reduced;
-    }, [tasks, globalFilter]);
+    }, [tasks, globalFilter, userFilter]);
 
     const handleAddSection = () => {
         const sectionName = prompt("Enter new section name:")
@@ -88,10 +93,12 @@ export function TasksTable() {
     }
 
     const stats = useMemo(() => {
-        const total = tasks.length
-        const completed = tasks.filter(t => t.completed).length
-        return { total, completed }
-    }, [tasks])
+        // Update stats to only show counts for filtered tasks
+        const filteredTasks = Object.values(tasksBySection).flat();
+        const total = filteredTasks.length;
+        const completed = filteredTasks.filter(t => t.completed).length;
+        return { total, completed };
+    }, [tasksBySection]);
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
@@ -141,9 +148,12 @@ export function TasksTable() {
                         updateTask={updateTask}
                     />
                 ))}
-            {Object.keys(tasksBySection).length === 0 && !globalFilter && (
+            {Object.keys(tasksBySection).length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                    No sections yet. Click "Add New Section" to get started.
+                    {globalFilter || userFilter ?
+                        "No tasks match your filters." :
+                        "No sections yet. Click \"Add New Section\" to get started."
+                    }
                 </div>
             )}
         </div>
