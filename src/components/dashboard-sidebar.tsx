@@ -53,10 +53,9 @@ export function DashboardSidebar({ currentView, onViewChange }: DashboardSidebar
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-6 py-4 text-sm text-gray-500">
-          Electoral Dashboard v1.0.0
+        <div className="px-4 pb-4">
+          <ModeToggle />
         </div>
-        <ModeToggle />
       </SidebarFooter>
     </Sidebar>
   )

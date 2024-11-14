@@ -1,8 +1,7 @@
-import { useMemo } from 'react'
+import { useUsers } from '@/hooks/use-users'
 
 export interface User {
     name: string
-    color?: string
 }
 
 export const COLORS = [
@@ -35,8 +34,10 @@ export function UserAvatar({ user, size = 'md', onClick }: {
         lg: 'w-10 h-10 text-base'
     };
 
+    const { users } = useUsers();
     const initials = user ? getInitials(user.name) : '';
-    const backgroundColor = user?.color || COLORS[0];
+    const indexOfUser = user ? users.findIndex(u => u.name === user.name) : -1;
+    const backgroundColor = COLORS[indexOfUser % COLORS.length];
 
     return user ? (
         <div

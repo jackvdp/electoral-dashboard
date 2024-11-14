@@ -9,8 +9,7 @@ export function useUsers() {
     const addUser = (name: string) => {
         if (!users.some(user => user.name === name)) {
             const newUser: User = {
-                name,
-                color: COLORS[users.length % COLORS.length]
+                name
             };
             setUsers(prev => [...prev, newUser]);
         }
@@ -26,8 +25,7 @@ export function useUsers() {
                 .filter(task => task.assignedToId)
                 .map(task => task.assignedToId as string)
         )).map(name => ({
-            name,
-            color: COLORS[(indexOfUser(users, name) % COLORS.length)]
+            name
         }));
         setUsers(uniqueUsers);
     };
