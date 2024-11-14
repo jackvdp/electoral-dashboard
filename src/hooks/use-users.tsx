@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { User } from '../components/tasks-table/UserAvatar'
-import { COLORS } from '../components/tasks-table/UserAvatar'
 import { Task } from '@prisma/client';
 
 export function useUsers() {

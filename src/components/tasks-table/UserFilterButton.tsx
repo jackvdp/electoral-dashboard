@@ -28,7 +28,7 @@ export function UserFilterDropdown({ users, selectedUser, onUserSelect }: UserFi
                 >
                     {selected ? (
                         <>
-                            <UserAvatar user={selected} size="sm" />
+                            <UserAvatar user={selected} indexOfUser={users.findIndex(u => u.name === selected.name)} size="sm" />
                             <span className="truncate">{selected.name}</span>
                         </>
                     ) : (
@@ -52,14 +52,14 @@ export function UserFilterDropdown({ users, selectedUser, onUserSelect }: UserFi
                     </div>
                     {!selectedUser && <Check className="h-4 w-4" />}
                 </DropdownMenuItem>
-                {users.map(user => (
+                {users.map((user, index) => (
                     <DropdownMenuItem
                         key={user.name}
                         className="flex items-center justify-between"
                         onClick={() => onUserSelect(user.name)}
                     >
                         <div className="flex items-center space-x-2">
-                            <UserAvatar user={user} size="sm" />
+                            <UserAvatar user={user} indexOfUser={index} size="sm" />
                             <span>{user.name}</span>
                         </div>
                         {selectedUser === user.name && <Check className="h-4 w-4" />}

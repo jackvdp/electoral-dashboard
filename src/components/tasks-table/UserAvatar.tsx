@@ -23,8 +23,9 @@ export function getInitials(name: string): string {
     return name.slice(0, 2).toUpperCase()
 }
 
-export function UserAvatar({ user, size = 'md', onClick }: {
+export function UserAvatar({ user, indexOfUser, size = 'md', onClick }: {
     user: User | null,
+    indexOfUser: number,
     size?: 'sm' | 'md' | 'lg',
     onClick?: () => void
 }) {
@@ -33,10 +34,7 @@ export function UserAvatar({ user, size = 'md', onClick }: {
         md: 'w-8 h-8 text-sm',
         lg: 'w-10 h-10 text-base'
     };
-
-    const { users } = useUsers();
     const initials = user ? getInitials(user.name) : '';
-    const indexOfUser = user ? users.findIndex(u => u.name === user.name) : -1;
     const backgroundColor = COLORS[indexOfUser % COLORS.length];
 
     return user ? (
@@ -64,7 +62,12 @@ export function UserAvatarGroup({ users, max = 3 }: { users: User[], max?: numbe
     return (
         <div className="flex -space-x-2">
             {visibleUsers.map((user, index) => (
-                <UserAvatar key={index} user={user} size="sm" />
+                <UserAvatar
+                    key={index}
+                    user={user}
+                    indexOfUser={users.findIndex(u => u.name === user.name)}
+                    size="sm"
+                />
             ))}
             {remaining > 0 && (
                 <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400">
@@ -89,15 +92,14 @@ export function UserSelect({
         <div className="p-2 space-y-2">
             <div className="font-medium text-sm mb-2">Assign to:</div>
             <div className="space-y-1">
-                {users.map(user => (
+                {users.map((user, index) => (
                     <div
                         key={user.name}
-                        className={`flex items-center space-x-2 p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                            selectedUser?.name === user.name ? 'bg-gray-100 dark:bg-gray-800' : ''
-                        }`}
+                        className={`flex items-center space-x-2 p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${selectedUser?.name === user.name ? 'bg-gray-100 dark:bg-gray-800' : ''
+                            }`}
                         onClick={() => onSelect(user)}
                     >
-                        <UserAvatar user={user} size="sm" />
+                        <UserAvatar user={user} indexOfUser={index} size="sm" />
                         <span className="text-sm">{user.name}</span>
                     </div>
                 ))}
@@ -105,7 +107,7 @@ export function UserSelect({
                     className="flex items-center space-x-2 p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
                     onClick={() => onSelect(null)}
                 >
-                    <UserAvatar user={null} size="sm" />
+                    <UserAvatar user={null} indexOfUser={-1} size="sm" />
                     <span className="text-sm">Unassign</span>
                 </div>
             </div>

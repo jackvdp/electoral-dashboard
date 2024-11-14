@@ -132,7 +132,7 @@ export const createColumns = ({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={`h-8 w-8 p-0 ${task.completed ? "opacity-50" : ""}`}>
-                      <UserAvatar user={assignedUser} />
+                      <UserAvatar user={assignedUser} indexOfUser={ assignedUser ? users.findIndex(u => u.name === assignedUser.name) : -1} />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[200px]">
