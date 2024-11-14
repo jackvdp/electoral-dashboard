@@ -34,6 +34,7 @@ import { useSponsors } from "@/hooks/use-sponsors"
 import { useEffect } from "react"
 import { createColumns } from "./columns"
 import { Sponsor } from "@prisma/client"
+import NavigationBar from "../navigation-bar"
 
 export function SponsorsTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -116,51 +117,51 @@ export function SponsorsTable() {
   )
 }
 
-function Header({ table, handleAddSponsor }: { table: ReturnType<typeof useReactTable<Sponsor>>, handleAddSponsor: () => void }) {
+function Header({
+  table,
+  handleAddSponsor
+}: {
+  table: ReturnType<typeof useReactTable<Sponsor>>,
+  handleAddSponsor: () => void
+}) {
   return (
-    <div className="flex items-center py-4">
-      <Input
-        placeholder="Filter companies..."
-        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("name")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
-      <Button
-        onClick={handleAddSponsor}
-        className="ml-4"
-        variant="default"
-      >
-        <Plus className="mr-2 h-4 w-4" /> Add Sponsor
-      </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
-            Columns
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {table
-            .getAllColumns()
-            .filter((column) => column.getCanHide())
-            .map((column) => {
-              return (
+    <NavigationBar>
+      <div className="flex items-center gap-4">
+        <Input
+          placeholder="Filter companies..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        
+        <Button onClick={handleAddSponsor} variant="default">
+          <Plus className="mr-2 h-4 w-4" /> Add Sponsor
+        </Button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">Columns</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
                   className="capitalize"
                   checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
                   {column.id}
                 </DropdownMenuCheckboxItem>
-              )
-            })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </NavigationBar>
   )
 }
 

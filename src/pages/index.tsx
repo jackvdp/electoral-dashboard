@@ -28,7 +28,7 @@ export default function DashboardPage() {
                 currentView={currentView}
                 onViewChange={setCurrentView}
               />
-              <main className="flex-1 p-6">
+              <main className="flex-1 px-6 pb-6">
                 {currentView === 'sponsors' &&
                   <SponsorsTable />
                 }

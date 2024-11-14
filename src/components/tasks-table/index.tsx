@@ -11,6 +11,7 @@ import SectionTable from "./SectionTable"
 import { useMemo, useState } from "react"
 import { useUsers } from "@/hooks/use-users"
 import { UserFilterDropdown } from "./UserFilterButton"
+import NavigationBar from "../navigation-bar"
 
 export function TasksTable() {
     const {
@@ -93,7 +94,6 @@ export function TasksTable() {
     }
 
     const stats = useMemo(() => {
-        // Update stats to only show counts for filtered tasks
         const filteredTasks = Object.values(tasksBySection).flat();
         const total = filteredTasks.length;
         const completed = filteredTasks.filter(t => t.completed).length;
@@ -104,33 +104,35 @@ export function TasksTable() {
     if (error) return <div>Error: {error}</div>
 
     return (
-        <div className="space-y-8 bg-blue">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1">
-                    <Input
-                        placeholder="Filter all tasks..."
-                        value={globalFilter}
-                        onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="max-w-sm"
-                    />
-                    <UserFilterDropdown
-                        users={users}
-                        selectedUser={userFilter}
-                        onUserSelect={setUserFilter}
-                    />
-                    <Button onClick={handleAddUser} variant="ghost">
-                        Add User
-                    </Button>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <div className="text-sm text-muted-foreground">
-                        {stats.completed} of {stats.total} tasks completed ({Math.round((stats.completed / stats.total) * 100 || 0)}%)
+        <div className="space-y-8">
+            <NavigationBar>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                        <Input
+                            placeholder="Filter all tasks..."
+                            value={globalFilter}
+                            onChange={(event) => setGlobalFilter(event.target.value)}
+                            className="max-w-sm"
+                        />
+                        <UserFilterDropdown
+                            users={users}
+                            selectedUser={userFilter}
+                            onUserSelect={setUserFilter}
+                        />
+                        <Button onClick={handleAddUser} variant="ghost">
+                            Add User
+                        </Button>
                     </div>
-                    <Button onClick={handleAddSection}>
-                        <Plus className="mr-2 h-4 w-4" /> Add New Section
-                    </Button>
+                    <div className="flex items-center space-x-4">
+                        <div className="text-sm text-muted-foreground">
+                            {stats.completed} of {stats.total} tasks completed ({Math.round((stats.completed / stats.total) * 100 || 0)}%)
+                        </div>
+                        <Button onClick={handleAddSection}>
+                            <Plus className="mr-2 h-4 w-4" /> Add New Section
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            </NavigationBar>
             {Object.entries(tasksBySection)
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([section, sectionTasks]) => (
