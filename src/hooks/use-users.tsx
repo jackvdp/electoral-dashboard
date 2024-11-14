@@ -36,7 +36,3 @@ export function useUsers() {
         syncUsersFromTasks
     };
 }
-
-function indexOfUser(users: User[], name: string): number {
-    return users.findIndex(user => user.name === name);
-}
