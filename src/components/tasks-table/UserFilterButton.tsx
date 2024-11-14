@@ -24,7 +24,7 @@ export function UserFilterDropdown({ users, selectedUser, onUserSelect }: UserFi
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
-                    className="flex justify-start text-black"
+                    className="flex justify-start"
                 >
                     {selected ? (
                         <>

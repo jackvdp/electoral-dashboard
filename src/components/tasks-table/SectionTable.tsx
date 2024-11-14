@@ -86,7 +86,7 @@ export default function SectionTable({ section, tasks, columns, addTask, updateT
     };
 
     return (
-        <div className="rounded-md border p-4 text-black">
+        <div className="rounded-md border p-4">
             <SectionTitleAndButtons
                 table={table}
                 section={section}

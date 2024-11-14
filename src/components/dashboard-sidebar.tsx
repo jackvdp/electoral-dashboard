@@ -10,6 +10,7 @@ import {
   SidebarFooter
 } from "@/components/ui/sidebar"
 import { ClipboardList, Users } from "lucide-react"
+import { ModeToggle } from "./reusables/mode-toggle";
 
 type View = 'sponsors' | 'tasks'
 
@@ -55,6 +56,7 @@ export function DashboardSidebar({ currentView, onViewChange }: DashboardSidebar
         <div className="px-6 py-4 text-sm text-gray-500">
           Electoral Dashboard v1.0.0
         </div>
+        <ModeToggle />
       </SidebarFooter>
     </Sidebar>
   )

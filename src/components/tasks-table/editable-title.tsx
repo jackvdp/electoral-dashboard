@@ -54,7 +54,7 @@ export function EditableTitle({
 
     return (
         <h2
-            className={`text-lg font-semibold cursor-pointer hover:bg-muted/50 px-2 py-1 rounded ${className}`}
+            className={`text-lg font-semibold cursor-pointer hover:bg-muted/50 px-2 py-1 rounded text-foreground`}
             onClick={() => setIsEditing(true)}
         >
             {value}

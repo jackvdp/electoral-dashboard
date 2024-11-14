@@ -104,7 +104,7 @@ export function TasksTable() {
     if (error) return <div>Error: {error}</div>
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 bg-blue">
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4 flex-1">
                     <Input
@@ -118,7 +118,7 @@ export function TasksTable() {
                         selectedUser={userFilter}
                         onUserSelect={setUserFilter}
                     />
-                    <Button onClick={handleAddUser} variant="ghost" className="text-black">
+                    <Button onClick={handleAddUser} variant="ghost">
                         Add User
                     </Button>
                 </div>

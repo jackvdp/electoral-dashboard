@@ -51,7 +51,6 @@
 thead .cell {
   font-weight: 500;
   text-align: left;
-  background-color: var(--background);
   position: relative;
 }
 
@@ -61,16 +60,4 @@ thead .cell {
 .cell[data-column="assignedTo"],
 .cell[data-column="actions"] {
   text-align: center;
-}
-
-.table :global(thead) {
-  @apply bg-white text-gray-900 dark:bg-white dark:text-gray-900;
-}
-
-.table :global(thead tr) {
-  @apply border-b border-gray-200;
-}
-
-.table :global(thead th) {
-  @apply bg-white text-gray-900 dark:bg-white dark:text-gray-900 font-medium;
 }
