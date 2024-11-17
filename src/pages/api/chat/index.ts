@@ -84,11 +84,6 @@ export default async function handler(
         if (isRagWorking) {
             console.log("✅ RAG retrieval successful. Context:", context.slice(0, 100) + "...");
         } else {
-            console.log(
-                process.env.ANTHROPIC_API_KEY,
-                process.env.BAWS_ACCESS_KEY_ID,
-                process.env.BAWS_SECRET_ACCESS_KEY
-            )
             console.warn("🚨 RAG Retrieval failed!");
         }
 
