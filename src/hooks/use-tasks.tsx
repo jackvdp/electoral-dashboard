@@ -5,6 +5,7 @@ interface TasksContextType {
     tasks: Task[]
     isLoading: boolean
     error: string | null
+    event: string
     fetchTasks: () => Promise<void>
     addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
     updateTask: (id: string, updates: Partial<Task>) => Promise<void>
@@ -13,7 +14,13 @@ interface TasksContextType {
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined)
 
-export function TasksProvider({ children }: { children: ReactNode }) {
+export function TasksProvider({
+                                  children,
+                                  event
+                              }: {
+    children: ReactNode,
+    event: string
+}) {
     const [tasks, setTasks] = useState<Task[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -22,7 +29,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         setIsLoading(true)
         setError(null)
         try {
-            const response = await fetch('/api/tasks')
+            const response = await fetch(`/api/${event}/tasks`)
             if (!response.ok) throw new Error('Failed to fetch tasks')
             const data = await response.json()
             setTasks(data)
@@ -31,14 +38,14 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false)
         }
-    }, [])
+    }, [event])
 
     const addTask = useCallback(async (
         newTask: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>
     ) => {
         setError(null)
         try {
-            const response = await fetch('/api/tasks', {
+            const response = await fetch(`/api/${event}/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newTask)
@@ -50,7 +57,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
             setError(error instanceof Error ? error.message : 'Failed to add task')
             throw error
         }
-    }, [])
+    }, [event])
 
     const updateTask = useCallback(async (
         id: string,
@@ -58,7 +65,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     ) => {
         setError(null)
         try {
-            const response = await fetch(`/api/tasks/${id}`, {
+            const response = await fetch(`/api/${event}/tasks/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates)
@@ -74,13 +81,13 @@ export function TasksProvider({ children }: { children: ReactNode }) {
             setError(error instanceof Error ? error.message : 'Failed to update task')
             throw error
         }
-    }, [])
+    }, [event])
 
     const deleteTask = useCallback(async (id: string) => {
         setIsLoading(true)
         setError(null)
         try {
-            const response = await fetch(`/api/tasks/${id}`, {
+            const response = await fetch(`/api/${event}/tasks/${id}`, {
                 method: 'DELETE'
             })
             if (!response.ok) throw new Error('Failed to delete task')
@@ -91,12 +98,13 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false)
         }
-    }, [])
+    }, [event])
 
     const value = {
         tasks,
         isLoading,
         error,
+        event,
         fetchTasks,
         addTask,
         updateTask,

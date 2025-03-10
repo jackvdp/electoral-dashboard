@@ -1,13 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '@/lib/prisma'
+import {getEventModels} from '@/lib/prisma'
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    const { event } = req.query
+    if (typeof event !== 'string') {
+        return res.status(400).json({ error: 'Invalid event' })
+    }
+
+    const { task: taskModel } = getEventModels(event)
+
     if (req.method === 'GET') {
         try {
-            const tasks = await prisma.task.findMany({
+            const tasks = await taskModel.findMany({
                 orderBy: [
                     { section: 'asc' },
                     { order: 'asc' }
@@ -21,7 +28,7 @@ export default async function handler(
 
     if (req.method === 'POST') {
         try {
-            const task = await prisma.task.create({
+            const task = await taskModel.create({
                 data: req.body
             })
             return res.status(200).json(task)

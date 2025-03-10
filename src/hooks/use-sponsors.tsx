@@ -5,6 +5,7 @@ interface SponsorsContextType {
     sponsors: Sponsor[]
     isLoading: boolean
     error: string | null
+    event: string
     fetchSponsors: () => Promise<void>
     addSponsor: (sponsor: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
     updateSponsor: (id: string, updates: Partial<Sponsor>) => Promise<void>
@@ -13,7 +14,13 @@ interface SponsorsContextType {
 
 const SponsorsContext = createContext<SponsorsContextType | undefined>(undefined)
 
-export function SponsorsProvider({ children }: { children: ReactNode }) {
+export function SponsorsProvider({
+                                     children,
+                                     event
+                                 }: {
+    children: ReactNode,
+    event: string
+}) {
     const [sponsors, setSponsors] = useState<Sponsor[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -22,7 +29,7 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         setIsLoading(true)
         setError(null)
         try {
-            const response = await fetch('/api/sponsors')
+            const response = await fetch(`/api/${event}/sponsors`)
             if (!response.ok) throw new Error('Failed to fetch sponsors')
             const data = await response.json()
             setSponsors(data)
@@ -31,14 +38,14 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false)
         }
-    }, [])
+    }, [event])
 
     const addSponsor = useCallback(async (
         newSponsor: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>
     ) => {
         setError(null)
         try {
-            const response = await fetch('/api/sponsors', {
+            const response = await fetch(`/api/${event}/sponsors`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newSponsor)
@@ -50,7 +57,7 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
             setError(error instanceof Error ? error.message : 'Failed to add sponsor')
             throw error
         }
-    }, [])
+    }, [event])
 
     const updateSponsor = useCallback(async (
         id: string,
@@ -58,7 +65,7 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
     ) => {
         setError(null)
         try {
-            const response = await fetch(`/api/sponsors/${id}`, {
+            const response = await fetch(`/api/${event}/sponsors/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates)
@@ -74,12 +81,12 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
             setError(error instanceof Error ? error.message : 'Failed to update sponsor')
             throw error
         }
-    }, [])
+    }, [event])
 
     const deleteSponsor = useCallback(async (id: string) => {
         setError(null)
         try {
-            const response = await fetch(`/api/sponsors/${id}`, {
+            const response = await fetch(`/api/${event}/sponsors/${id}`, {
                 method: 'DELETE'
             })
             if (!response.ok) throw new Error('Failed to delete sponsor')
@@ -88,12 +95,13 @@ export function SponsorsProvider({ children }: { children: ReactNode }) {
             setError(error instanceof Error ? error.message : 'Failed to delete sponsor')
             throw error
         }
-    }, [])
+    }, [event])
 
     const value = {
         sponsors,
         isLoading,
         error,
+        event,
         fetchSponsors,
         addSponsor,
         updateSponsor,

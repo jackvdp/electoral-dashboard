@@ -1,13 +1,15 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_URL")
+  schemas  = ["dominican-republic", "botswana"]
 }
 
-model Sponsor {
+model DominicanSponsor {
   id                      String   @id @default(uuid())
   name                    String
   initialContact          Boolean  @default(false)
@@ -20,9 +22,12 @@ model Sponsor {
   specialRequirments      String   @default("")
   exhibitionSpace         Boolean  @default(false)
   flightDetails           String   @default("")
+
+  @@schema("dominican-republic")
+  @@map("Sponsor")
 }
 
-model Task {
+model DominicanTask {
   id           String   @id @default(cuid())
   completed    Boolean  @default(false)
   task         String
@@ -32,4 +37,41 @@ model Task {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   assignedToId String?
+
+  @@schema("dominican-republic")
+  @@map("Task")
+}
+
+
+model BotswanaSponsor {
+  id                      String   @id @default(uuid())
+  name                    String
+  initialContact          Boolean  @default(false)
+  receivedProgrammeAdvert Boolean  @default(false)
+  numberOfAttendees       Int      @default(0)
+  attendeeNames           String?
+  contactEmail            String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  specialRequirments      String   @default("")
+  exhibitionSpace         Boolean  @default(false)
+  flightDetails           String   @default("")
+
+  @@schema("botswana")
+  @@map("Sponsor")
+}
+
+model BotswanaTask {
+  id           String   @id @default(cuid())
+  completed    Boolean  @default(false)
+  task         String
+  details      String?
+  section      String
+  order        Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  assignedToId String?
+
+  @@schema("botswana")
+  @@map("Task")
 }
