@@ -107,11 +107,48 @@ fs.writeFileSync(prismaLibPath, prismaContent);
 // 3. Run Prisma commands
 console.log('Running Prisma commands...');
 try {
-    // Create new schema
-    console.log('Creating database schema...');
-    // Create a temporary file for the SQL
+    // Create new schema and tables
+    console.log('Creating database schema and tables...');
+
+    // Create the SQL file with schema and table creation commands
     const tempSqlPath = path.resolve('./temp-schema.sql');
-    fs.writeFileSync(tempSqlPath, `CREATE SCHEMA IF NOT EXISTS "${countryName}";`);
+    const createTablesSql = `
+-- Create schema
+CREATE SCHEMA IF NOT EXISTS "${countryName}";
+
+-- Create Sponsor table
+CREATE TABLE IF NOT EXISTS "${countryName}"."Sponsor" (
+  "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+  "name" TEXT NOT NULL,
+  "initialContact" BOOLEAN NOT NULL DEFAULT false,
+  "receivedProgrammeAdvert" BOOLEAN NOT NULL DEFAULT false,
+  "numberOfAttendees" INTEGER NOT NULL DEFAULT 0,
+  "attendeeNames" TEXT,
+  "contactEmail" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  "specialRequirments" TEXT NOT NULL DEFAULT '',
+  "exhibitionSpace" BOOLEAN NOT NULL DEFAULT false,
+  "flightDetails" TEXT NOT NULL DEFAULT '',
+  CONSTRAINT "${countryName}_Sponsor_pkey" PRIMARY KEY ("id")
+);
+
+-- Create Task table
+CREATE TABLE IF NOT EXISTS "${countryName}"."Task" (
+  "id" TEXT NOT NULL,
+  "completed" BOOLEAN NOT NULL DEFAULT false,
+  "task" TEXT NOT NULL,
+  "details" TEXT,
+  "section" TEXT NOT NULL,
+  "order" INTEGER NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  "assignedToId" TEXT,
+  CONSTRAINT "${countryName}_Task_pkey" PRIMARY KEY ("id")
+);
+`;
+
+    fs.writeFileSync(tempSqlPath, createTablesSql);
 
     // Pass the environment variable directly to the command
     const psqlCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${tempSqlPath}"`;
