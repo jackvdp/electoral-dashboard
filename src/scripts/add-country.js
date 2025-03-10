@@ -154,6 +154,30 @@ CREATE TABLE IF NOT EXISTS "${countryName}"."Task" (
     const psqlCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${tempSqlPath}"`;
     execSync(psqlCommand, { stdio: 'inherit' });
 
+    const copyDataSql = `
+-- Copy data from Dominican Republic tasks to ${countryName} tasks
+INSERT INTO "${countryName}"."Task" (
+  "id", "completed", "task", "details", 
+  "section", "order", "createdAt", "updatedAt", "assignedToId"
+)
+SELECT 
+  gen_random_uuid(), "completed", "task", "details", 
+  "section", "order", "createdAt", CURRENT_TIMESTAMP, "assignedToId"
+FROM "dominican-republic"."Task";
+`;
+
+// Create a new SQL file for copying data
+    const copyDataSqlPath = path.resolve('./copy-data.sql');
+    fs.writeFileSync(copyDataSqlPath, copyDataSql);
+
+// Execute the data copy command
+    console.log(`Copying sponsor data from Botswana to ${pascalCaseCountry}...`);
+    const copyCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${copyDataSqlPath}"`;
+    execSync(copyCommand, { stdio: 'inherit' });
+
+// Clean up the copy SQL file
+    fs.unlinkSync(copyDataSqlPath);
+
     // Clean up temp file
     fs.unlinkSync(tempSqlPath);
 
