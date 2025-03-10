@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS "${countryName}"."Task" (
     execSync(psqlCommand, { stdio: 'inherit' });
 
     const copyDataSql = `
--- Copy data from Dominican Republic tasks to ${countryName} tasks
+-- Copy data from default tasks to ${countryName} tasks
 INSERT INTO "${countryName}"."Task" (
   "id", "completed", "task", "details", 
   "section", "order", "createdAt", "updatedAt", "assignedToId"
@@ -163,7 +163,7 @@ INSERT INTO "${countryName}"."Task" (
 SELECT 
   gen_random_uuid(), "completed", "task", "details", 
   "section", "order", "createdAt", CURRENT_TIMESTAMP, "assignedToId"
-FROM "dominican-republic"."Task";
+FROM "default-data"."Task";
 `;
 
 // Create a new SQL file for copying data
@@ -171,7 +171,7 @@ FROM "dominican-republic"."Task";
     fs.writeFileSync(copyDataSqlPath, copyDataSql);
 
 // Execute the data copy command
-    console.log(`Copying sponsor data from Botswana to ${pascalCaseCountry}...`);
+    console.log(`Copying sponsor data from default data to ${pascalCaseCountry}...`);
     const copyCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${copyDataSqlPath}"`;
     execSync(copyCommand, { stdio: 'inherit' });
 
