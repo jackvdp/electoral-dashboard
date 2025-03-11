@@ -8,7 +8,7 @@ export function getEventDetails(event: string) {
         case 'botswana':
             return {
                 name: 'Symposium Botswana',
-                date: '4 – 7 Sep 25'
+                date: '3 – 6 Sep 25'
             }
         default:
             throw new Error(`Invalid event: ${event}`)
