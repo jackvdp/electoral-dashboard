@@ -20,6 +20,16 @@ if (args.length === 0) {
 // Format country name
 const rawCountryName = args[0].toLowerCase();
 const countryName = rawCountryName.replace(/\s+/g, '-');
+
+// Create a camelCase version for property names (e.g., "south-africa" -> "southAfrica")
+const camelCaseName = countryName
+    .split('-')
+    .map((word, index) => {
+        return index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join('');
+
+// Create PascalCase name for model names (e.g., "south-africa" -> "SouthAfrica")
 const pascalCaseCountry = countryName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -82,21 +92,21 @@ fs.writeFileSync(schemaPath, schemaContent);
 console.log(`Adding ${pascalCaseCountry} to prisma.ts...`);
 let prismaContent = fs.readFileSync(prismaLibPath, 'utf8');
 
-// Add to interface
+// Add to interface - Use PascalCase for Prisma properties
 prismaContent = prismaContent.replace(
     /(interface PrismaClientWithSchemas extends PrismaClient \{)([\s\S]*?)(\})/,
-    `$1$2    ${countryName.replace(/-/g, '')}Task: PrismaClient['task']\n    ${countryName.replace(/-/g, '')}Sponsor: PrismaClient['sponsor']\n$3`
+    `$1$2    ${pascalCaseCountry}Task: PrismaClient['task']\n    ${pascalCaseCountry}Sponsor: PrismaClient['sponsor']\n$3`
 );
 
-// Add to getEventModels
-const modelCase = `        case '${countryName}':\n            return {\n                task: prisma.${countryName.replace(/-/g, '')}Task,\n                sponsor: prisma.${countryName.replace(/-/g, '')}Sponsor\n            }\n`;
+// Add to getEventModels - Use proper casing for property access
+const modelCase = `        case '${countryName}':\n            return {\n                task: prisma.${pascalCaseCountry}Task,\n                sponsor: prisma.${pascalCaseCountry}Sponsor\n            }\n`;
 
 prismaContent = prismaContent.replace(
     /(switch\(event\) \{)([\s\S]*?)(        default:)/,
     `$1$2${modelCase}$3`
 );
 
-// Add to VALID_EVENTS
+// Add to VALID_EVENTS - use original countryName with hyphens for URL paths
 prismaContent = prismaContent.replace(
     /(VALID_EVENTS = \[)(.*?)(\])/,
     `$1$2, '${countryName}'$3`
@@ -154,8 +164,11 @@ CREATE TABLE IF NOT EXISTS "${countryName}"."Task" (
     const psqlCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${tempSqlPath}"`;
     execSync(psqlCommand, { stdio: 'inherit' });
 
+    // Get the source schema for copying data
+    const sourceSchema = "default-symposium";
+
     const copyDataSql = `
--- Copy data from default tasks to ${countryName} tasks
+-- Copy data from template tasks to ${countryName} tasks
 INSERT INTO "${countryName}"."Task" (
   "id", "completed", "task", "details", 
   "section", "order", "createdAt", "updatedAt", "assignedToId"
@@ -163,19 +176,19 @@ INSERT INTO "${countryName}"."Task" (
 SELECT 
   gen_random_uuid(), "completed", "task", "details", 
   "section", "order", "createdAt", CURRENT_TIMESTAMP, "assignedToId"
-FROM "default-data"."Task";
+FROM "${sourceSchema}"."Task";
 `;
 
-// Create a new SQL file for copying data
+    // Create a new SQL file for copying data
     const copyDataSqlPath = path.resolve('./copy-data.sql');
     fs.writeFileSync(copyDataSqlPath, copyDataSql);
 
-// Execute the data copy command
-    console.log(`Copying sponsor data from default data to ${pascalCaseCountry}...`);
+    // Execute the data copy command
+    console.log(`Copying task data from ${sourceSchema} to ${pascalCaseCountry}...`);
     const copyCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${copyDataSqlPath}"`;
     execSync(copyCommand, { stdio: 'inherit' });
 
-// Clean up the copy SQL file
+    // Clean up the copy SQL file
     fs.unlinkSync(copyDataSqlPath);
 
     // Clean up temp file
