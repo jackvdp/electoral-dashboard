@@ -27,7 +27,7 @@ export function DashboardSidebar({ currentView, event, onViewChange }: Dashboard
   return (
     <Sidebar>
       <SidebarHeader>
-        <h1 className="px-6 pt-4 text-xl font-bold">{name}</h1>
+        <h1 className="px-6 pt-4 text-2xl font-bold">{name}</h1>
         <h1 className="px-6 py-4 text-xl">{date}</h1>
         <hr/>
       </SidebarHeader>
