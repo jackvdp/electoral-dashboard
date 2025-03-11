@@ -92,14 +92,14 @@ fs.writeFileSync(schemaPath, schemaContent);
 console.log(`Adding ${pascalCaseCountry} to prisma.ts...`);
 let prismaContent = fs.readFileSync(prismaLibPath, 'utf8');
 
-// Add to interface - Use PascalCase for Prisma properties
+// Add to interface - Use camelCase for Prisma properties
 prismaContent = prismaContent.replace(
     /(interface PrismaClientWithSchemas extends PrismaClient \{)([\s\S]*?)(\})/,
-    `$1$2    ${pascalCaseCountry}Task: PrismaClient['task']\n    ${pascalCaseCountry}Sponsor: PrismaClient['sponsor']\n$3`
+    `$1$2    ${camelCaseName}Task: PrismaClient['task']\n    ${camelCaseName}Sponsor: PrismaClient['sponsor']\n$3`
 );
 
 // Add to getEventModels - Use proper casing for property access
-const modelCase = `        case '${countryName}':\n            return {\n                task: prisma.${pascalCaseCountry}Task,\n                sponsor: prisma.${pascalCaseCountry}Sponsor\n            }\n`;
+const modelCase = `        case '${countryName}':\n            return {\n                task: prisma.${camelCaseName}Task,\n                sponsor: prisma.${camelCaseName}Sponsor\n            }\n`;
 
 prismaContent = prismaContent.replace(
     /(switch\(event\) \{)([\s\S]*?)(        default:)/,
