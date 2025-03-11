@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const { execSync } = require('child_process');
-const path = require('path');
-require('dotenv').config({ path: '.env.local' });
+import {readFileSync, writeFileSync, unlinkSync} from 'fs';
+import {execSync} from 'child_process';
+import {resolve} from 'path';
+import {config} from "dotenv";
+
+config({path: '.env.local'});
 
 // Ensure database URL is available
 if (!process.env.POSTGRES_URL) {
@@ -36,12 +38,12 @@ const pascalCaseCountry = countryName
     .join('');
 
 // Paths
-const schemaPath = path.resolve('./prisma/schema.prisma');
-const prismaLibPath = path.resolve('./src/lib/prisma.ts');
+const schemaPath = resolve('./prisma/schema.prisma');
+const prismaLibPath = resolve('./src/lib/prisma.ts');
 
 // 1. Update schema.prisma
 console.log(`Adding ${pascalCaseCountry} to schema.prisma...`);
-let schemaContent = fs.readFileSync(schemaPath, 'utf8');
+let schemaContent = readFileSync(schemaPath, 'utf8');
 
 // Add to schemas array
 schemaContent = schemaContent.replace(
@@ -86,11 +88,11 @@ model ${pascalCaseCountry}Task {
 `;
 
 schemaContent += sponsorModel;
-fs.writeFileSync(schemaPath, schemaContent);
+writeFileSync(schemaPath, schemaContent);
 
 // 2. Update prisma.ts
 console.log(`Adding ${pascalCaseCountry} to prisma.ts...`);
-let prismaContent = fs.readFileSync(prismaLibPath, 'utf8');
+let prismaContent = readFileSync(prismaLibPath, 'utf8');
 
 // Add to interface - Use camelCase for Prisma properties
 prismaContent = prismaContent.replace(
@@ -112,7 +114,7 @@ prismaContent = prismaContent.replace(
     `$1$2, '${countryName}'$3`
 );
 
-fs.writeFileSync(prismaLibPath, prismaContent);
+writeFileSync(prismaLibPath, prismaContent);
 
 // 3. Run Prisma commands
 console.log('Running Prisma commands...');
@@ -121,7 +123,7 @@ try {
     console.log('Creating database schema and tables...');
 
     // Create the SQL file with schema and table creation commands
-    const tempSqlPath = path.resolve('./temp-schema.sql');
+    const tempSqlPath = resolve('./temp-schema.sql');
     const createTablesSql = `
 -- Create schema
 CREATE SCHEMA IF NOT EXISTS "${countryName}";
@@ -158,14 +160,14 @@ CREATE TABLE IF NOT EXISTS "${countryName}"."Task" (
 );
 `;
 
-    fs.writeFileSync(tempSqlPath, createTablesSql);
+    writeFileSync(tempSqlPath, createTablesSql);
 
     // Pass the environment variable directly to the command
     const psqlCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${tempSqlPath}"`;
-    execSync(psqlCommand, { stdio: 'inherit' });
+    execSync(psqlCommand, {stdio: 'inherit'});
 
     // Get the source schema for copying data
-    const sourceSchema = "default-symposium";
+    const sourceSchema = "default-data";
 
     const copyDataSql = `
 -- Copy data from template tasks to ${countryName} tasks
@@ -180,19 +182,19 @@ FROM "${sourceSchema}"."Task";
 `;
 
     // Create a new SQL file for copying data
-    const copyDataSqlPath = path.resolve('./copy-data.sql');
-    fs.writeFileSync(copyDataSqlPath, copyDataSql);
+    const copyDataSqlPath = resolve('./copy-data.sql');
+    writeFileSync(copyDataSqlPath, copyDataSql);
 
     // Execute the data copy command
     console.log(`Copying task data from ${sourceSchema} to ${pascalCaseCountry}...`);
     const copyCommand = `POSTGRES_URL="${process.env.POSTGRES_URL}" npx prisma db execute --file="${copyDataSqlPath}"`;
-    execSync(copyCommand, { stdio: 'inherit' });
+    execSync(copyCommand, {stdio: 'inherit'});
 
     // Clean up the copy SQL file
-    fs.unlinkSync(copyDataSqlPath);
+    unlinkSync(copyDataSqlPath);
 
     // Clean up temp file
-    fs.unlinkSync(tempSqlPath);
+    unlinkSync(tempSqlPath);
 
     // Generate Prisma client
     console.log('Generating Prisma client...');

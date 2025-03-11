@@ -1,13 +1,6 @@
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client'
 
-// Extend PrismaClient type to include our schema-specific models
-declare global {
-    namespace PrismaJson {
-        // Define additional models here if needed
-    }
-}
-
 // Define types for our schema-specific client
 interface PrismaClientWithSchemas extends PrismaClient {
     dominicanTask: PrismaClient['task']

@@ -23,7 +23,7 @@ node src/scripts/add-country.js thailand
 2. The script will:
     - Update the Prisma schema to include the new country
     - Create database tables for the new country
-    - Copy template data from the default-symposium schema
+    - Copy template data from the default-data schema
     - Update the TypeScript types and event helpers
     - Generate a new Prisma client
 
@@ -36,15 +36,6 @@ npm run dev
 4. Your new country should now be accessible at:
     - URL: `/thailand`
     - API: `/api/thailand/tasks` and `/api/thailand/sponsors`
-
-### Known Issues
-
-⚠️ **IMPORTANT**: Currently, there is a bug with country names containing hyphens. Until fixed:
-
-- Do not use hyphens in country names (e.g., use "southafrica" instead of "south-africa")
-- If you need a multi-word name, use camelCase (e.g., "southAfrica")
-
-This issue affects the Prisma client's ability to properly recognize models with hyphenated schema names.
 
 ### Manually Adding a Country
 
