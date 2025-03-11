@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { EditableTitle } from "./editable-title"
 import styles from './SectionTable.module.css';
-import { Task } from "@prisma/client"
+import { BotswanaTask as Task } from "@prisma/client"
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";

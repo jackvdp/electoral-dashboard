@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback, useState, ReactNode } from 'react'
-import { Task } from "@prisma/client"
+import { BotswanaTask as Task } from "@prisma/client"
 
 interface TasksContextType {
     tasks: Task[]

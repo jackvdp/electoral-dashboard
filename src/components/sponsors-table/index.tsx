@@ -33,7 +33,7 @@ import { Plus } from "lucide-react"
 import { useSponsors } from "@/hooks/use-sponsors"
 import { useEffect } from "react"
 import { createColumns } from "./columns"
-import { Sponsor } from "@prisma/client"
+import { DominicanSponsor as Sponsor } from "@prisma/client"
 import NavigationBar from "../navigation-bar"
 
 export function SponsorsTable() {

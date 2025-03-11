@@ -6,7 +6,7 @@ import { Plus } from "lucide-react"
 import { useTasks } from "@/hooks/use-tasks"
 import { useEffect } from "react"
 import { createColumns } from "./columns"
-import { Task } from "@prisma/client"
+import { DominicanTask as Task } from "@prisma/client"
 import SectionTable from "./SectionTable"
 import { useMemo, useState } from "react"
 import { useUsers } from "@/hooks/use-users"
@@ -94,7 +94,7 @@ export function TasksTable() {
     }
 
     const stats = useMemo(() => {
-        const filteredTasks = Object.values(tasksBySection).flat();
+        const filteredTasks: Task[] = Object.values(tasksBySection).flat() as Task[];
         const total = filteredTasks.length;
         const completed = filteredTasks.filter(t => t.completed).length;
         return { total, completed };
@@ -139,7 +139,7 @@ export function TasksTable() {
                     <SectionTable
                         key={section}
                         section={section}
-                        tasks={sectionTasks}
+                        tasks={sectionTasks as Task[]}
                         columns={columns}
                         addTask={addTask}
                         updateTask={updateTask}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { User } from '../components/tasks-table/UserAvatar'
-import { Task } from '@prisma/client';
+import { BotswanaTask as Task } from '@prisma/client';
 
 export function useUsers() {
     const [users, setUsers] = useState<User[]>([]);

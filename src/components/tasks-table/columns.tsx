@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { Task } from "@prisma/client"
+import { DominicanTask as Task } from "@prisma/client"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, MoveUp, MoveDown, Trash2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"

@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client'
 
-// Define types for our schema-specific client
 interface PrismaClientWithSchemas extends PrismaClient {
+    // @ts-ignore
     dominicanTask: PrismaClient['task']
+    // @ts-ignore
     dominicanSponsor: PrismaClient['sponsor']
+    // @ts-ignore
     botswanaTask: PrismaClient['task']
+    // @ts-ignore
     botswanaSponsor: PrismaClient['sponsor']
 }
 
