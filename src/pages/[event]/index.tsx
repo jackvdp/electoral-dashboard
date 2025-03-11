@@ -34,6 +34,7 @@ export default function DashboardPage() {
             <div className="flex min-h-screen w-full">
               <DashboardSidebar
                 currentView={currentView}
+                event={event}
                 onViewChange={setCurrentView}
               />
               <main className="flex-1 px-6 pb-6">

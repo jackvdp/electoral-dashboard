@@ -11,19 +11,25 @@ import {
 } from "@/components/ui/sidebar"
 import { ClipboardList, Users } from "lucide-react"
 import { ModeToggle } from "./reusables/mode-toggle";
+import {getEventDetails} from "@/lib/getEventDetails";
 
 type View = 'sponsors' | 'tasks'
 
 interface DashboardSidebarProps {
   currentView: View;
+  event: string
   onViewChange: (view: View) => void;
 }
 
-export function DashboardSidebar({ currentView, onViewChange }: DashboardSidebarProps) {
+export function DashboardSidebar({ currentView, event, onViewChange }: DashboardSidebarProps) {
+  const { name, date } = getEventDetails(event);
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <h2 className="px-6 py-4 text-lg font-semibold">Electoral Dashboard</h2>
+        <h1 className="px-6 pt-4 text-xl font-bold">{name}</h1>
+        <h1 className="px-6 py-4 text-xl">{date}</h1>
+        <hr/>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
